@@ -1,10 +1,19 @@
 let vorpal = require('vorpal')();
+let figlet = require('figlet');
 
 vorpal
-  .command('duck [path] [width] [height]', 'Outputs "rabbit"')
+  .command('http <url>', 'Find keyword')
   .action(function (args, callback) {
-    this.log('تست', args);
     callback();
   });
 
-vorpal.delimiter('keywordDensity$').show();
+
+
+figlet('K e y w o r d', function (err, data) {
+  if (err) {
+    return;
+  } else {
+    console.log(data);
+  }
+  vorpal.delimiter('#').show();
+});
