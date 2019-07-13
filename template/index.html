@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Keyword Density</title>
+    <style>
+        body {
+            background: #fafafa;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 12px;
+            direction: rtl;
+        }
+
+        span {
+            cursor: default
+        }
+
+        p {
+            margin: 0;
+            padding: 0;
+        }
+
+        .main {
+            position: absolute;
+            top: 30px;
+            right: 50px;
+            left: 50px;
+            bottom: 30px;
+        }
+
+        .summary {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            left: calc(70% + 10px);
+            bottom: 10px;
+            border-radius: 8px;
+            background: #f7f7f7;
+            padding: 20px;
+        }
+
+        .title {
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .summary #item p {
+            display: block;
+            width: 100%;
+            margin: 15px 0;
+        }
+
+        .summary #item span {
+            padding: 2px 7px;
+        }
+
+        .summary #item p::after {
+            content: '';
+            position: relative;
+            display: block;
+            clear: both;
+        }
+
+        .summary #item p span:first-child {
+            float: right;
+        }
+
+        .summary #item p span:last-child {
+            float: left;
+            background: #666;
+            color: #fff;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .details {
+            position: absolute;
+            top: 10px;
+            right: calc(30% + 10px);
+            left: 10px;
+            bottom: 10px;
+            border-radius: 8px;
+        }
+
+        .url {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: calc(100% - 55px);
+            border-radius: 8px;
+            background: #fff;
+            direction: ltr;
+        }
+
+        .url span {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .count {
+            position: absolute;
+            top: 65px;
+            right: 0;
+            left: 0;
+            bottom: calc(100% - 185px);
+        }
+
+        .count .words {
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: calc(50% + 5px);
+            bottom: 0;
+            border-radius: 8px;
+            background: #fff;
+            padding: 20px;
+        }
+
+        .count .keywords {
+            position: absolute;
+            top: 0;
+            right: calc(50% + 5px);
+            left: 0;
+            bottom: 0;
+            border-radius: 8px;
+            background: #fff;
+            padding: 20px;
+        }
+
+        .count .result {
+            direction: ltr;
+            font-size: 38px;
+            text-align: left;
+            color: #666;
+        }
+
+        .count .result span:nth-child(2) {
+            font-size: 36%;
+            font-weight: bold;
+        }
+
+        .list {
+            position: absolute;
+            top: 195px;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            border-radius: 8px;
+            background: #fff;
+            overflow: hidden;
+        }
+
+        .box {
+            position: absolute;
+            top: 20px;
+            right: 10px;
+            left: 10px;
+            bottom: 20px;
+            padding: 0 20px 0 30px;
+            margin-left: -30px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            text-align: justify;
+        }
+
+        .list span {
+            display: inline-block;
+            vertical-align: middle;
+            min-width: 20px;
+            height: 30px;
+            background: #f7f7f7;
+            padding: 5px 10px;
+            box-sizing: border-box;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 2px 2px 4px 2px;
+            text-align: center;
+        }
+
+        .list span.len3 {
+            width: 30px;
+        }
+
+        .list span.len4 {
+            width: 40px;
+        }
+
+        .list span.len5 {
+            width: 50px;
+        }
+
+        .list span.len6 {
+            width: 60px;
+        }
+
+        .list span.len7 {
+            width: 70px;
+        }
+
+        .list span.len8 {
+            width: 80px;
+        }
+
+        .list span.len9 {
+            width: 90px;
+        }
+
+        .list span.len10 {
+            width: 100px;
+        }
+
+        .list span.len11 {
+            width: 110px;
+        }
+
+        .list span.len12 {
+            width: 120px;
+        }
+
+        .list span.len13 {
+            width: 130px;
+        }
+
+        .list span.len14 {
+            width: 140px;
+        }
+
+        .list span.len15 {
+            width: 150px;
+        }
+
+        .list span.len16 {
+            width: 160px;
+        }
+
+        .list span:not(:empty) {
+            width: auto;
+        }
+    </style>
+    <script>
+        var data = {
+            url: 'http://',
+            word: []
+        };
+    </script>
+</head>
+
+<body>
+    <div class="main">
+        <div class="summary">
+            <p class="title">کلمات کلیدی</p>
+            <div id="item">
+            </div>
+        </div>
+        <div class="details">
+            <div class="url">
+                <span id="url">--</span>
+            </div>
+            <div class="count">
+                <div class="words">
+                    <p class="title">تعداد کل</p>
+                    <p class="result">
+                        <span id="word_count">--</span>
+                    </p>
+                </div>
+                <div class="keywords">
+                    <p class="title">کلمات کلیدی</p>
+                    <p class="result">
+                        <span id="keyword_count">--</span>
+                        <span id="keyword_density">--</span>
+                    </p>
+                </div>
+            </div>
+            <div class="list">
+                <div class="box" id="list">
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('url').innerHTML = data.url;
+        var keywords = [];
+        var keywords_len = 0;
+        data.word.forEach(function (item, index) {
+            var thisWord = document.createElement('span');
+            thisWord.classList.add('len' + item[0].length);
+            if (item[1]) {
+                var id = encodeURI(item[0]).replace(/%/g, '');
+                if (keywords.indexOf(id) !== -1) {
+                    document.getElementById(id).innerText = Number(document.getElementById(id).innerText) + 1;
+                } else {
+                    var p = document.createElement('p');
+                    var keyword = document.createElement('span');
+                    var result = document.createElement('span');
+                    keyword.innerText = item[0];
+                    result.innerText = '1';
+                    result.setAttribute('id', id);
+                    p.appendChild(keyword);
+                    p.appendChild(result);
+                    document.getElementById('item').appendChild(p);
+                    keywords.push(id);
+                }
+                keywords_len++;
+                thisWord.innerText = item[0];
+            }
+            document.getElementById('list').appendChild(thisWord);
+        });
+        document.getElementById('word_count').innerText = data.word.length;
+        document.getElementById('keyword_count').innerText = keywords_len;
+        if (keywords_len > 0) {
+            document.getElementById('keyword_density').innerText = '%' + Math.floor(keywords_len * 100 / data.word.length);
+        }
+    </script>
+</body>
+
+</html>
