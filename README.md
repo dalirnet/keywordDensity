@@ -1,6 +1,6 @@
 # keywordDensity
 
-```javascript
+```console
 npm install
 npm start
 ```
