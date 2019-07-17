@@ -1,4 +1,4 @@
-const fs = require('fs');
+const open = require('open');
 const server = require('server');
 const { get, post } = server.router;
 const { status, render, json } = server.reply;
@@ -72,4 +72,5 @@ figlet('Keyword', (err, data) => {
       return status(400);
     }))
   ]);
+  open('http://localhost:8085/');
 });
