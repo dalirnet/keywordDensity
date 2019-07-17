@@ -13,6 +13,10 @@
             direction: rtl;
         }
 
+        *:focus {
+            outline: none;
+        }
+
         span {
             cursor: default
         }
@@ -98,9 +102,12 @@
             direction: ltr;
         }
 
-        .url span {
+        .url input {
             font-weight: bold;
             font-size: 14px;
+            border: none;
+            width: 100%;
+            height: 40px;
         }
 
         .count {
@@ -241,14 +248,9 @@
 
         .list span:not(:empty) {
             width: auto;
+            background: #e2e2e2;
         }
     </style>
-    <script>
-        var data = {
-            url: 'http://',
-            word: []
-        };
-    </script>
 </head>
 
 <body>
@@ -260,7 +262,7 @@
         </div>
         <div class="details">
             <div class="url">
-                <span id="url">--</span>
+                <input id="url" placeholder="http:// + Enter" autocomplete="off" onkeyup="send(event)">
             </div>
             <div class="count">
                 <div class="words">
@@ -284,37 +286,61 @@
         </div>
     </div>
     <script>
-        document.getElementById('url').innerHTML = data.url;
-        var keywords = [];
-        var keywords_len = 0;
-        data.word.forEach(function (item, index) {
-            var thisWord = document.createElement('span');
-            thisWord.classList.add('len' + item[0].length);
-            if (item[1]) {
-                var id = encodeURI(item[0]).replace(/%/g, '');
-                if (keywords.indexOf(id) !== -1) {
-                    document.getElementById(id).innerText = Number(document.getElementById(id).innerText) + 1;
-                } else {
-                    var p = document.createElement('p');
-                    var keyword = document.createElement('span');
-                    var result = document.createElement('span');
-                    keyword.innerText = item[0];
-                    result.innerText = '1';
-                    result.setAttribute('id', id);
-                    p.appendChild(keyword);
-                    p.appendChild(result);
-                    document.getElementById('item').appendChild(p);
-                    keywords.push(id);
-                }
-                keywords_len++;
-                thisWord.innerText = item[0];
+        function send(event) {
+            var token = '{{csrf}}';
+            if (event.key == "Enter") {
+                var value = encodeURI(document.getElementById('url').value);
+                fetch('/', {
+                    method: 'POST',
+                    body: value,
+                    credentials: 'include',
+                    headers: { 'csrf-token': token }
+                }).then(
+                    function (response) {
+                        if (response.status !== 200) {
+                            alert('Looks like there was a problem. Status Code: ' + response.status);
+                            return;
+                        }
+                        document.getElementById('list').innerHTML = '';
+                        document.getElementById('item').innerHTML = '';
+                        response.json().then(function (words) {
+                            var keywords = [];
+                            var keywords_len = 0;
+                            words.forEach(function (item, index) {
+                                var thisWord = document.createElement('span');
+                                thisWord.classList.add('len' + item[0].length);
+                                if (item[1]) {
+                                    var id = encodeURI(item[0]).replace(/%/g, '');
+                                    if (keywords.indexOf(id) !== -1) {
+                                        document.getElementById(id).innerText = Number(document.getElementById(id).innerText) + 1;
+                                    } else {
+                                        var p = document.createElement('p');
+                                        var keyword = document.createElement('span');
+                                        var result = document.createElement('span');
+                                        keyword.innerText = item[0];
+                                        result.innerText = '1';
+                                        result.setAttribute('id', id);
+                                        p.appendChild(keyword);
+                                        p.appendChild(result);
+                                        document.getElementById('item').appendChild(p);
+                                        keywords.push(id);
+                                    }
+                                    keywords_len++;
+                                    thisWord.innerText = item[0];
+                                }
+                                document.getElementById('list').appendChild(thisWord);
+                            });
+                            document.getElementById('word_count').innerText = words.length;
+                            document.getElementById('keyword_count').innerText = keywords_len;
+                            if (keywords_len > 0) {
+                                document.getElementById('keyword_density').innerText = '%' + Math.floor(keywords_len * 100 / words.length);
+                            }
+                        });
+                    }
+                ).catch(function (err) {
+                    alert(err);
+                });
             }
-            document.getElementById('list').appendChild(thisWord);
-        });
-        document.getElementById('word_count').innerText = data.word.length;
-        document.getElementById('keyword_count').innerText = keywords_len;
-        if (keywords_len > 0) {
-            document.getElementById('keyword_density').innerText = '%' + Math.floor(keywords_len * 100 / data.word.length);
         }
     </script>
 </body>

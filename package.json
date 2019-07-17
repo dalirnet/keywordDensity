@@ -4,12 +4,16 @@
   "description": "persian keyword density",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
   "author": "AmirRezaDalir",
   "license": "ISC",
   "dependencies": {
     "figlet": "^1.2.3",
-    "vorpal": "^1.12.0"
+    "jsdom": "^15.1.1",
+    "lodash": "^4.17.14",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4",
+    "server": "^1.0.19"
   }
 }
