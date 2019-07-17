@@ -1,5 +1,8 @@
 # keywordDensity
 
+[#کلمه_کلیدی](https://github.com/dalirnet/keywordDensity) \
+[#چگالی_کلمات_کلیدی](https://github.com/dalirnet/keywordDensity)
+
 ```console
 npm install
 npm start
